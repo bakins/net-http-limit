@@ -27,7 +27,7 @@ func New(timeout time.Duration, max uint) *Limiter {
 		channel: make(chan struct{}, max),
 	}
 
-	for i := 0; i < max; i++ {
+	for i := uint(0); i < max; i++ {
 		l.channel <- struct{}{}
 	}
 
@@ -44,13 +44,13 @@ func (l *Limiter) Handler(h http.Handler) http.Handler {
 
 // ServeHTTP will attempt to "reserve" a slot and wait up to timeout to do so.
 // Will return a 503 error.
-func (h *LimiterHandler) ServeHTTP(w ResponseWriter, r *Request) {
+func (h *LimiterHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	select {
 	case <-h.limiter.channel:
 		defer func(l *Limiter) {
 			l.channel <- struct{}{}
 		}(h.limiter)
-		h.handler(w, r)
+		h.handler.ServeHTTP(w, r)
 	case <-time.After(h.limiter.timeout):
 		http.Error(w, "max concurreny", 503)
 	}
