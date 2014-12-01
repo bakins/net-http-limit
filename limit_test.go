@@ -18,6 +18,8 @@ func newRequest(method, url string) *http.Request {
 	return req
 }
 
+// This test just tests than limit actually is a valif http.handler.
+// need a test to test limiting
 func TestHandler(t *testing.T) {
 	l := New(time.Second, 2)
 
