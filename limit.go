@@ -52,6 +52,6 @@ func (h *LimiterHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}(h.limiter)
 		h.handler.ServeHTTP(w, r)
 	case <-time.After(h.limiter.timeout):
-		http.Error(w, "max concurreny", 503)
+		http.Error(w, http.StatusText(http.StatusServiceUnavailable), http.StatusServiceUnavailable)
 	}
 }
