@@ -7,3 +7,5 @@ env:
 script:
   - go get
   - go test
+notify:
+  
